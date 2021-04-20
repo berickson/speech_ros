@@ -104,15 +104,16 @@ def diagnostics_callback(diagnostic_array):
 
 def utterances_callback(utterance_ros):
 
-  # look for requests to the right of wakeword
-  utterance = utterance_ros.data
+  # look for requests to the right of wake word
+  utterance = utterance_ros.data.lower()
   rospy.loginfo(f"utterance: {utterance}")
-  wakeword = "robot"
-  parts = utterance.split(wakeword, 1)
-  if len(parts)!=2:
-    rospy.loginfo("wake word not heard")
+  wake_word = "super robot"
+  if not utterance.startswith(wake_word):
+    rospy.loginfo("wake word '{wake_word}' not heard")
     return
-  request  = parts[1]
+  
+  # remove wake word to find request
+  request = utterance[len(wake_word):].lstrip()
 
   p = re.compile('.*your name.*', re.IGNORECASE)
   if p.match(request) != None:
@@ -156,7 +157,7 @@ def utterances_callback(utterance_ros):
     say(f"I'm ok")
     return
 
-  say_publisher.publish(f"Request received: {request}")
+  say(f"Sorry, I don't know how to respond to {request}")
 
 rospy.Subscriber("speech/utterances", String, utterances_callback)
 rospy.Subscriber("/diagnostics", DiagnosticArray, diagnostics_callback)
