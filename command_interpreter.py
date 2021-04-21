@@ -109,7 +109,7 @@ def utterances_callback(utterance_ros):
   rospy.loginfo(f"utterance: {utterance}")
   wake_word = "super robot"
   if not utterance.startswith(wake_word):
-    rospy.loginfo("wake word '{wake_word}' not heard")
+    rospy.loginfo(f"wake word '{wake_word}' not heard")
     return
   
   # remove wake word to find request
