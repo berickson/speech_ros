@@ -22,7 +22,7 @@ include_directories(
 
 catkin_install_python(PROGRAMS
   speech.py
-  command_interpeter.py
+  command_interpreter.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
