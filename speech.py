@@ -56,7 +56,7 @@ m = sr.Microphone()
 #sr.dynamic_energy_threshold = True
 with m as source:
     r.adjust_for_ambient_noise(source)
-stop_listening = r.listen_in_background(m, listen_callback)
+stop_listening = r.listen_in_background(m, listen_callback, phrase_time_limit = 5.0)
 print("Listening in the background")
 
 def say_callback(ros_string):
