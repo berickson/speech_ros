@@ -107,8 +107,15 @@ def utterances_callback(utterance_ros):
   # look for requests to the right of wake word
   utterance = utterance_ros.data.lower()
   rospy.loginfo(f"utterance: {utterance}")
-  wake_word = "super robot"
-  if not utterance.startswith(wake_word):
+  wake_words = ["hey robot", "he robot", "arabic", "hear about", "hero but", "hero bike", "your robot", "you're about", "a robot"]
+  found_wake = False
+  for wake_word in wake_words:
+    if utterance.startswith(wake_word):
+      found_wake = True
+      break
+  
+  
+  if not found_wake:
     rospy.loginfo(f"wake word '{wake_word}' not heard")
     return
   
