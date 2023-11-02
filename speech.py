@@ -14,6 +14,7 @@ from gtts import gTTS
 
 use_gtts = True
 
+use_microphone = True
 
 from std_msgs.msg import String
 
@@ -44,28 +45,31 @@ def say(text):
         speech_engine.save_to_file("uh "+text, "out.mp3")
         speech_engine.runAndWait()
     rospy.loginfo(f'mp3 done')
-    speaker_volume_percent = rospy.get_param("/speaker_volume_percent", 5.0)
+    speaker_volume_percent = rospy.get_param("/speaker_volume_percent", 75.0)
     os.system(f"play --no-show-progress --volume {speaker_volume_percent / 100.0} out.mp3")
     os.system("rm out.mp3")
 
 
-r = sr.Recognizer()
-m = sr.Microphone()
+if use_microphone:
+    r = sr.Recognizer()
+    m = sr.Microphone()
 
-# set microphone to adjust senstivity automatically as background noise changes
-#sr.dynamic_energy_threshold = True
-with m as source:
-    r.adjust_for_ambient_noise(source)
-stop_listening = r.listen_in_background(m, listen_callback, phrase_time_limit = 5.0)
-print("Listening in the background")
+    # set microphone to adjust senstivity automatically as background noise changes
+    #sr.dynamic_energy_threshold = True
+    with m as source:
+        r.adjust_for_ambient_noise(source)
+    stop_listening = r.listen_in_background(m, listen_callback, phrase_time_limit = 5.0)
+    print("Listening in the background")
 
 def say_callback(ros_string):
-    global stop_listening
-    global r
-    global m
-    stop_listening(wait_for_stop=True)
+    if use_microphone:
+        global stop_listening
+        global r
+        global m
+        stop_listening(wait_for_stop=True)
     say(ros_string.data)
-    stop_listening = r.listen_in_background(m, listen_callback)
+    if use_microphone:
+        stop_listening = r.listen_in_background(m, listen_callback)
 
 rospy.Subscriber("speech/say", String, say_callback)
 
